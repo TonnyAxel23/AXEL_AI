@@ -1,9 +1,16 @@
+from app.core.startup import StartupManager
 from app.core.assistant import Assistant
 
 
 def main():
 
-    assistant = Assistant()
+    startup = StartupManager()
+
+    container = startup.initialize()
+
+    ai_engine = container.get("ai_engine")
+
+    assistant = Assistant(ai_engine)
 
     assistant.run()
 

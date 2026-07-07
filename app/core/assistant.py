@@ -1,17 +1,16 @@
-from app.brain.command_processor import CommandProcessor
-
+# assistant.py
 
 class Assistant:
 
-    def __init__(self):
+    def __init__(self, ai_engine):
 
-        self.processor = CommandProcessor()
+        self.ai_engine = ai_engine
 
-    def run(self):
+    def run(self) -> None:
 
-        print("=" * 50)
+        print("=" * 60)
         print("AXEL AI")
-        print("=" * 50)
+        print("=" * 60)
 
         while True:
 
@@ -23,6 +22,6 @@ class Assistant:
 
                 break
 
-            response = self.processor.process(command)
+            response = self.ai_engine.process(command)
 
             print(f"AXEL: {response}")
