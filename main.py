@@ -1,17 +1,13 @@
-from app.config.settings import settings
-from app.core.logger import logger
+from app.core.assistant import Assistant
 
 
 def main():
-    logger.info("AXEL AI started")
 
-    print("=" * 50)
-    print(settings.APP_NAME)
-    print(f"Version: {settings.APP_VERSION}")
-    print("=" * 50)
+    assistant = Assistant()
 
-    print("AXEL AI is running...")
+    assistant.run()
 
 
 if __name__ == "__main__":
+
     main()
