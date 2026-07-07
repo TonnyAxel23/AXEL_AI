@@ -6,8 +6,14 @@ from app.tools.datetime_tool import DateTimeTool
 class DateTimePlugin(PluginInterface):
 
     @property
-    def intent(self):
-        return Intent.GET_TIME
+    def metadata(self):
+        return {
+            "name": "DateTime Plugin",
+            "version": "1.0.0",
+            "author": "Tonny Odhiambo",
+            "intent": Intent.GET_TIME,
+            "description": "Provides the current date and time."
+        }
 
     def execute(self, entities: dict) -> str:
 
@@ -16,4 +22,7 @@ class DateTimePlugin(PluginInterface):
         if request == "time":
             return f"The current time is {DateTimeTool.current_time()}"
 
-        return f"Today's date is {DateTimeTool.current_date()}"
+        if request == "date":
+            return f"Today's date is {DateTimeTool.current_date()}"
+
+        return "I couldn't determine whether you wanted the date or time."

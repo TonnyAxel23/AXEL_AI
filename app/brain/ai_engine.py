@@ -15,7 +15,7 @@ class AIEngine:
     execution to the appropriate plugin.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, plugin_loader: PluginLoader) -> None:
         self.intent_detector = IntentDetector()
         self.context = ContextManager()
 

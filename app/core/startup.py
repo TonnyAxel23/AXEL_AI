@@ -9,6 +9,8 @@ from app.config.settings import settings
 from app.plugins.plugin_loader import PluginLoader
 from app.brain.ai_engine import AIEngine
 
+from app.background.task_manager import TaskManager
+from app.background.tasks.heartbeat_task import HeartbeatTask
 
 class StartupManager:
     """
@@ -46,6 +48,20 @@ class StartupManager:
         )
 
         # -----------------------------
+        # Task Manager
+        # -----------------------------
+        task_manager = TaskManager()
+
+        task_manager.register(
+            HeartbeatTask()
+        )
+
+        self.container.register(
+            "task_manager",
+            task_manager
+        )
+
+        # -----------------------------
         # Plugin Loader
         # -----------------------------
         plugin_loader = PluginLoader()
@@ -70,6 +86,14 @@ class StartupManager:
             f"Loaded {len(plugin_loader.all_plugins())} plugins."
         )
 
-        logger.info("Core services initialized successfully.")
+        logger.info(
+            f"Plugins Loaded: {len(plugin_loader.all_plugins())}"
+        )
+
+        logger.info(
+            f"Plugins Failed: {len(plugin_loader.failed_plugins())}"
+        )
+
+        logger.info("AXEL startup completed successfully.")
 
         return self.container
