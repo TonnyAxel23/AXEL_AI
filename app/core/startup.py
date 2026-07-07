@@ -6,37 +6,70 @@ from app.core.logger import logger
 
 from app.config.settings import settings
 
+from app.plugins.plugin_loader import PluginLoader
 from app.brain.ai_engine import AIEngine
 
 
 class StartupManager:
+    """
+    Responsible for bootstrapping the AXEL application.
 
-    def __init__(self):
+    Initializes and registers all core services
+    in the Service Container.
+    """
 
+    def __init__(self) -> None:
         self.container = ServiceContainer()
 
-    def initialize(self):
+    def initialize(self) -> ServiceContainer:
 
+        logger.info("=" * 60)
         logger.info("Starting AXEL...")
+        logger.info("=" * 60)
 
-        # Register configuration
+        # -----------------------------
+        # Configuration
+        # -----------------------------
         self.container.register(
             "settings",
             settings
         )
 
-        # Register Event Bus
+        # -----------------------------
+        # Event Bus
+        # -----------------------------
+        event_bus = EventBus()
+
         self.container.register(
             "event_bus",
-            EventBus()
+            event_bus
         )
 
-        # Register AI Engine
+        # -----------------------------
+        # Plugin Loader
+        # -----------------------------
+        plugin_loader = PluginLoader()
+        plugin_loader.load_plugins()
+
+        self.container.register(
+            "plugin_loader",
+            plugin_loader
+        )
+
+        # -----------------------------
+        # AI Engine
+        # -----------------------------
+        ai_engine = AIEngine(plugin_loader)
+
         self.container.register(
             "ai_engine",
-            AIEngine()
+            ai_engine
         )
 
-        logger.info("Core services initialized.")
+        logger.info(
+            f"Loaded {len(plugin_loader.all_plugins())} plugins."
+        )
+
+        logger.info("Core services initialized successfully.")
 
         return self.container

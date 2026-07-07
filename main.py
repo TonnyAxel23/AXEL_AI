@@ -1,20 +1,9 @@
-from app.core.startup import StartupManager
-from app.core.assistant import Assistant
+from app.bootstrap import bootstrap
 
 
-def main():
-
-    startup = StartupManager()
-
-    container = startup.initialize()
-
-    ai_engine = container.get("ai_engine")
-
-    assistant = Assistant(ai_engine)
-
-    assistant.run()
+def main() -> None:
+    bootstrap()
 
 
 if __name__ == "__main__":
-
     main()
