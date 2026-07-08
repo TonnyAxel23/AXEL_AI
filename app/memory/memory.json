@@ -1,0 +1,16 @@
+{
+    "name": {
+        "key": "name",
+        "value": "Tonny",
+        "id": "4bb40461-91d1-4ca8-b079-70014c75a368",
+        "created_at": "2026-07-08T14:49:32.460626",
+        "updated_at": "2026-07-08T14:49:32.460700"
+    },
+    "github": {
+        "key": "github",
+        "value": "TonnyAxel23",
+        "id": "e30c4ca6-a5b3-470d-b4da-7eca54704d1f",
+        "created_at": "2026-07-08T14:49:32.465882",
+        "updated_at": "2026-07-08T14:49:32.465919"
+    }
+}

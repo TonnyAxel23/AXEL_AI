@@ -19,6 +19,10 @@ def bootstrap() -> None:
 
     task_manager.start_all()
 
+    scheduler = container.get("scheduler")
+
+    scheduler.start()
+
     # Retrieve services
     ai_engine = container.get("ai_engine")
 
@@ -28,6 +32,7 @@ def bootstrap() -> None:
     try:
         assistant.run()
     finally:
+        scheduler.stop()
         task_manager.stop_all()
 
     # Start AXEL

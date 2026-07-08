@@ -9,8 +9,11 @@ from app.config.settings import settings
 from app.plugins.plugin_loader import PluginLoader
 from app.brain.ai_engine import AIEngine
 
-from app.background.task_manager import TaskManager
-from app.background.tasks.heartbeat_task import HeartbeatTask
+from app.services.background.task_manager import TaskManager
+from app.services.background.tasks.heartbeat_task import HeartbeatTask
+from app.services.background.scheduler import Scheduler
+
+from app.memory.memory_manager import MemoryManager
 
 class StartupManager:
     """
@@ -61,6 +64,13 @@ class StartupManager:
             task_manager
         )
 
+        scheduler = Scheduler()
+
+        self.container.register(
+            "scheduler",
+            scheduler
+        )
+
         # -----------------------------
         # Plugin Loader
         # -----------------------------
@@ -70,6 +80,13 @@ class StartupManager:
         self.container.register(
             "plugin_loader",
             plugin_loader
+        )
+
+        memory = MemoryManager()
+
+        self.container.register(
+            "memory",
+            memory
         )
 
         # -----------------------------
