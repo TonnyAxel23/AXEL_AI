@@ -10,6 +10,10 @@ class PluginInterface(ABC):
     and implement an execute() method that performs its task.
     """
 
+    # Services required by the plugin.
+    # Child plugins can override this.
+    dependencies: list[str] = []
+
     @property
     @abstractmethod
     def metadata(self) -> dict[str, Any]:
@@ -29,37 +33,22 @@ class PluginInterface(ABC):
 
     @property
     def name(self) -> str:
-        """
-        Shortcut for the plugin's display name.
-        """
         return self.metadata["name"]
 
     @property
     def version(self) -> str:
-        """
-        Shortcut for the plugin version.
-        """
         return self.metadata["version"]
 
     @property
     def author(self) -> str:
-        """
-        Shortcut for the plugin author.
-        """
         return self.metadata["author"]
 
     @property
     def description(self) -> str:
-        """
-        Shortcut for the plugin description.
-        """
         return self.metadata["description"]
 
     @property
     def intent(self):
-        """
-        Shortcut for the plugin's intent.
-        """
         return self.metadata["intent"]
 
     @abstractmethod
@@ -71,6 +60,6 @@ class PluginInterface(ABC):
             entities: Extracted entities from the user's command.
 
         Returns:
-            A response string for the assistant.
+            Assistant response.
         """
         pass

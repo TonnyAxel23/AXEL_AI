@@ -3,12 +3,18 @@ from enum import Enum
 
 class Intent(Enum):
 
-    OPEN_APP = "OPEN_APP"
+    UNKNOWN = 0
 
-    OPEN_WEBSITE = "OPEN_WEBSITE"
+    OPEN_APP = 1
 
-    GET_TIME = "GET_TIME"
+    OPEN_WEBSITE = 2
 
-    GET_DATE = "GET_DATE"
+    GET_TIME = 3
 
-    UNKNOWN = "UNKNOWN"
+    GET_DATE = 4
+
+    REMEMBER = 5
+
+    RECALL = 6
+
+    FORGET = 7

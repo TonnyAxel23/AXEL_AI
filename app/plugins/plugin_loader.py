@@ -1,18 +1,18 @@
 import importlib
 import inspect
 import pkgutil
-import traceback
 
 from app.plugins.plugin_interface import PluginInterface
 
 
 class PluginLoader:
     """
-    Automatically discovers and loads all plugins
-    inside the app.plugins package.
+    Discovers and loads all AXEL plugins.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, container):
+
+        self.container = container
         self._plugins = {}
         self._failed_plugins = {}
 
@@ -52,9 +52,32 @@ class PluginLoader:
                         and obj is not PluginInterface
                     ):
 
-                        plugin = obj()
+                        # Resolve dependencies
+                        dependencies = []
 
-                        self._plugins[plugin.intent] = plugin
+                        for service_name in obj.dependencies:
+
+                            dependency = self.container.get(service_name)
+
+                            if dependency is None:
+                                raise RuntimeError(
+                                    f"Service '{service_name}' required by "
+                                    f"{obj.__name__} is not registered."
+                                )
+
+                            dependencies.append(dependency)
+
+                        # Create plugin
+                        plugin = obj(*dependencies)
+
+                        # Support one or many intents
+                        intents = plugin.intent
+
+                        if not isinstance(intents, (list, tuple, set)):
+                            intents = [intents]
+
+                        for intent in intents:
+                            self._plugins[intent] = plugin
 
                         loaded += 1
 
@@ -66,14 +89,10 @@ class PluginLoader:
             except Exception as e:
 
                 failed += 1
-
                 self._failed_plugins[module_name] = str(e)
 
                 print(f"✗ {module_name}")
                 print(f"    {e}")
-
-                # Uncomment while debugging
-                # traceback.print_exc()
 
         print("-" * 60)
         print(f"Loaded : {loaded}")
@@ -81,10 +100,13 @@ class PluginLoader:
         print("=" * 60)
 
     def get(self, intent):
+
         return self._plugins.get(intent)
 
     def all_plugins(self) -> dict:
+
         return self._plugins
 
     def failed_plugins(self) -> dict:
+
         return self._failed_plugins

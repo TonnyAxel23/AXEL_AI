@@ -27,6 +27,14 @@ class ServiceContainer:
 
         return self._services[name]
 
+    def has(self, name: str) -> bool:
+
+        return name in self.services
+
+    def all(self):
+
+        return self.services
+
     def remove(self, name: str) -> None:
         """
         Check whether a service is registered.

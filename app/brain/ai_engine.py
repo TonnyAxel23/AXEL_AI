@@ -4,24 +4,24 @@ from app.brain.commands.intent_detector import IntentDetector
 from app.brain.commands.entity_extractor import EntityExtractor
 from app.brain.context_manager import ContextManager
 
-from app.plugins.plugin_loader import PluginLoader
-
 
 class AIEngine:
     """
-    The central processing engine for AXEL.
-    Responsible for understanding user commands,
-    extracting intent and entities, and delegating
-    execution to the appropriate plugin.
+    Central processing engine for AXEL.
+
+    Responsible for:
+    - Cleaning user input
+    - Detecting intent
+    - Extracting entities
+    - Maintaining conversation context
+    - Delegating execution to plugins
     """
 
-    def __init__(self, plugin_loader: PluginLoader) -> None:
+    def __init__(self, plugin_loader):
+
+        self.loader = plugin_loader
         self.intent_detector = IntentDetector()
         self.context = ContextManager()
-
-        # Load all available plugins
-        self.loader = PluginLoader()
-        self.loader.load_plugins()
 
     def process(self, command: str) -> str:
         """
@@ -40,7 +40,11 @@ class AIEngine:
         # Extract entities
         entities = EntityExtractor.extract(words)
 
-        # Add request type for DateTime plugin
+        # Provide common information to every plugin
+        entities["command"] = cleaned
+        entities["intent"] = intent
+
+        # Convenience fields
         if intent.name == "GET_TIME":
             entities["request"] = "time"
 
@@ -50,7 +54,7 @@ class AIEngine:
         # Save conversation context
         self.context.update(intent, entities)
 
-        # Find the correct plugin
+        # Find matching plugin
         plugin = self.loader.get(intent)
 
         if plugin:

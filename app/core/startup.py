@@ -1,26 +1,29 @@
 # app/core/startup.py
 
-from app.core.services.event_bus import EventBus
-from app.core.services.service_container import ServiceContainer
 from app.core.logger import logger
 
 from app.config.settings import settings
 
-from app.plugins.plugin_loader import PluginLoader
-from app.brain.ai_engine import AIEngine
+from app.core.services.event_bus import EventBus
+from app.core.services.service_container import ServiceContainer
 
 from app.services.background.task_manager import TaskManager
-from app.services.background.tasks.heartbeat_task import HeartbeatTask
 from app.services.background.scheduler import Scheduler
+from app.services.background.tasks.heartbeat_task import HeartbeatTask
 
 from app.memory.memory_manager import MemoryManager
+
+from app.plugins.plugin_loader import PluginLoader
+
+from app.brain.ai_engine import AIEngine
+
 
 class StartupManager:
     """
     Responsible for bootstrapping the AXEL application.
 
-    Initializes and registers all core services
-    in the Service Container.
+    Initializes all core services, loads plugins,
+    and prepares the AI engine.
     """
 
     def __init__(self) -> None:
@@ -32,17 +35,17 @@ class StartupManager:
         logger.info("Starting AXEL...")
         logger.info("=" * 60)
 
-        # -----------------------------
+        # ==========================================================
         # Configuration
-        # -----------------------------
+        # ==========================================================
         self.container.register(
             "settings",
             settings
         )
 
-        # -----------------------------
+        # ==========================================================
         # Event Bus
-        # -----------------------------
+        # ==========================================================
         event_bus = EventBus()
 
         self.container.register(
@@ -50,9 +53,9 @@ class StartupManager:
             event_bus
         )
 
-        # -----------------------------
-        # Task Manager
-        # -----------------------------
+        # ==========================================================
+        # Background Task Manager
+        # ==========================================================
         task_manager = TaskManager()
 
         task_manager.register(
@@ -64,6 +67,9 @@ class StartupManager:
             task_manager
         )
 
+        # ==========================================================
+        # Scheduler
+        # ==========================================================
         scheduler = Scheduler()
 
         self.container.register(
@@ -71,17 +77,9 @@ class StartupManager:
             scheduler
         )
 
-        # -----------------------------
-        # Plugin Loader
-        # -----------------------------
-        plugin_loader = PluginLoader()
-        plugin_loader.load_plugins()
-
-        self.container.register(
-            "plugin_loader",
-            plugin_loader
-        )
-
+        # ==========================================================
+        # Memory Manager
+        # ==========================================================
         memory = MemoryManager()
 
         self.container.register(
@@ -89,27 +87,44 @@ class StartupManager:
             memory
         )
 
-        # -----------------------------
+        # ==========================================================
+        # Plugin Loader
+        # ==========================================================
+        plugin_loader = PluginLoader(
+            self.container
+        )
+
+        self.container.register(
+            "plugin_loader",
+            plugin_loader
+        )
+
+        # Load all plugins AFTER every service has been registered
+        plugin_loader.load_plugins()
+
+        # ==========================================================
         # AI Engine
-        # -----------------------------
-        ai_engine = AIEngine(plugin_loader)
+        # ==========================================================
+        ai_engine = AIEngine(
+            plugin_loader
+        )
 
         self.container.register(
             "ai_engine",
             ai_engine
         )
 
+        # ==========================================================
+        # Startup Summary
+        # ==========================================================
+        logger.info("-" * 60)
         logger.info(
-            f"Loaded {len(plugin_loader.all_plugins())} plugins."
+            f"Plugins Loaded : {len(plugin_loader.all_plugins())}"
         )
-
         logger.info(
-            f"Plugins Loaded: {len(plugin_loader.all_plugins())}"
+            f"Plugins Failed : {len(plugin_loader.failed_plugins())}"
         )
-
-        logger.info(
-            f"Plugins Failed: {len(plugin_loader.failed_plugins())}"
-        )
+        logger.info("-" * 60)
 
         logger.info("AXEL startup completed successfully.")
 

@@ -51,4 +51,16 @@ class IntentDetector:
 
             return Intent.GET_DATE
 
+        if command.startswith("remember"):
+            return Intent.REMEMBER
+
+        if command.startswith("what is my"):
+            return Intent.RECALL
+
+        if command.startswith("who is my"):
+            return Intent.RECALL
+
+        if command.startswith("forget"):
+            return Intent.FORGET
+
         return Intent.UNKNOWN
