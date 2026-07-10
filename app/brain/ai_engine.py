@@ -4,7 +4,6 @@ from app.brain.commands.intent_detector import IntentDetector
 from app.brain.commands.entity_extractor import EntityExtractor
 from app.brain.context_manager import ContextManager
 
-
 class AIEngine:
     """
     Central processing engine for AXEL.
