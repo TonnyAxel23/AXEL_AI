@@ -1,6 +1,5 @@
 from app.bootstrap import bootstrap
 
-
 def main() -> None:
     bootstrap()
 
