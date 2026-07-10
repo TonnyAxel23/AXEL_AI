@@ -2,7 +2,6 @@ from app.automation.app_launcher import AppLauncher
 from app.automation.browser import Browser
 from app.tools.datetime_tool import DateTimeTool
 
-
 class CommandProcessor:
 
     def process(self, command: str):
