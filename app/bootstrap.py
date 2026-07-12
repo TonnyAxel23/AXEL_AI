@@ -1,39 +1,26 @@
 from app.core.startup import StartupManager
-from app.core.assistant import Assistant
+from app.core.services.service_names import (
+    TASK_MANAGER,
+    SCHEDULER,
+)
 
 
-def bootstrap() -> None:
+def bootstrap():
     """
-    Boot the AXEL application.
+    Initialize AXEL and return the Service Container.
 
-    Initializes all core services,
-    creates the assistant,
-    and starts the main interaction loop.
+    This function should NOT start the assistant.
+    It only builds the application.
     """
 
-    # Initialize the application
     startup = StartupManager()
+
     container = startup.initialize()
 
-    task_manager = container.get("task_manager")
-
+    task_manager = container.get(TASK_MANAGER)
     task_manager.start_all()
 
-    scheduler = container.get("scheduler")
-
+    scheduler = container.get(SCHEDULER)
     scheduler.start()
 
-    # Retrieve services
-    ai_engine = container.get("ai_engine")
-
-    # Create assistant
-    assistant = Assistant(ai_engine)
-
-    try:
-        assistant.run()
-    finally:
-        scheduler.stop()
-        task_manager.stop_all()
-
-    # Start AXEL
-    assistant.run()
+    return container
